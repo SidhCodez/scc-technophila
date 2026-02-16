@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TECHNOPHILA — Where Innovation Meets Execution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ─── CSS RESET & ROOT VARIABLES ─── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0B0B0B;
+            --red: #E10600;
+            --red-dim: #a00400;
+            --white: #FFFFFF;
+            --gray: #9A9A9A;
+            --card-bg: #111111;
+            --border: #1e1e1e;
+            --font-display: 'Bebas Neue', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ─── CUSTOM CURSOR ─── */
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: var(--red);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(225, 6, 0, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.12s ease, width 0.3s ease, height 0.3s ease;
+        }
+
+        .cursor-ring.hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--red);
+        }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--red);
+            border-radius: 2px;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 5vw;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s ease, border-color 0.4s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(11, 11, 11, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom-color: var(--border);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            letter-spacing: 0.1em;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 100%;
+            height: 1px;
+            background: var(--red);
+            transition: right 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        .nav-links a:hover::after {
+            right: 0;
+        }
+
+        .nav-cta {
+            background: var(--red);
+            color: var(--white) !important;
+            padding: 8px 20px;
+            font-family: var(--font-mono) !important;
+            font-size: 0.7rem !important;
+            letter-spacing: 0.1em;
+            clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+            transition: background 0.2s ease !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--red-dim) !important;
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 2px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+
+        /* ─── HERO ─── */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Canvas background */
+        #hero-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        /* Scanlines overlay */
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.08) 2px,
+                    rgba(0, 0, 0, 0.08) 4px);
+            pointer-events: none;
+        }
+
+        /* Red diagonal slash */
+        .hero-slash {
+            position: absolute;
+            right: -60px;
+            top: 0;
+            bottom: 0;
+            width: 220px;
+            background: var(--red);
+            transform: skewX(-8deg);
+            z-index: 1;
+            opacity: 0.07;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 5vw;
+            max-width: 1100px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.3em;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.3s forwards;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 11vw, 14rem);
+            white-space: nowrap;
+            line-height: 0.88;
+            letter-spacing: 0.04em;
+            color: var(--white);
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeUp 0.9s ease 0.5s forwards;
+        }
+
+        .hero-title .red-line {
+            color: var(--red);
+        }
+
+        .hero-tagline {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-top: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.7s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.9s forwards;
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--red);
+            color: var(--white);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 16px 36px;
+            clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+            transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--red-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(225, 6, 0, 0.35);
+        }
+
+        .btn-primary:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--white);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 15px 36px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--red);
+            background: rgba(225, 6, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* ─── SCROLL INDICATOR ─── */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 1.2s forwards;
+        }
+
+        .scroll-indicator span {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--red), transparent);
+            animation: scrollPulse 2s ease infinite;
+        }
+
+        /* ─── SECTION BASE ─── */
+        section {
+            padding: 120px 5vw;
+        }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-label::before {
+            content: '';
+            display: inline-block;
+            width: 32px;
+            height: 1px;
+            background: var(--red);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 0.9;
+            letter-spacing: 0.02em;
+        }
+
+        /* ─── ABOUT ─── */
+        #about {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .about-left {}
+
+        .about-left .section-title {
+            margin-bottom: 2rem;
+        }
+
+        .about-right {}
+
+        .about-desc {
+            font-size: 1.15rem;
+            color: var(--gray);
+            line-height: 1.9;
+            margin-bottom: 2rem;
+        }
+
+        .about-desc strong {
+            color: var(--white);
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        .stat {
+            background: var(--bg);
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--red);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        .about-visual {
+            position: relative;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-box {
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-box-inner {
+            font-family: var(--font-display);
+            font-size: 10rem;
+            color: rgba(225, 6, 0, 0.06);
+            letter-spacing: -0.02em;
+            user-select: none;
+            position: absolute;
+        }
+
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(225, 6, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(225, 6, 0, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .about-badge {
+            position: relative;
+            z-index: 2;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 24px 32px;
+            text-align: center;
+        }
+
+        .about-badge-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .about-badge-sub {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--red);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .corner-bracket {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+        }
+
+        .corner-bracket.tl {
+            top: -1px;
+            left: -1px;
+            border-top: 2px solid var(--red);
+            border-left: 2px solid var(--red);
+        }
+
+        .corner-bracket.tr {
+            top: -1px;
+            right: -1px;
+            border-top: 2px solid var(--red);
+            border-right: 2px solid var(--red);
+        }
+
+        .corner-bracket.bl {
+            bottom: -1px;
+            left: -1px;
+            border-bottom: 2px solid var(--red);
+            border-left: 2px solid var(--red);
+        }
+
+        .corner-bracket.br {
+            bottom: -1px;
+            right: -1px;
+            border-bottom: 2px solid var(--red);
+            border-right: 2px solid var(--red);
+        }
+
+        /* ─── EVENTS ─── */
+        #events {
+            border-top: 1px solid var(--border);
+        }
+
+        .events-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5px;
+            background: var(--border);
+        }
+
+        .event-card {
+            background: var(--card-bg);
+            padding: 40px 36px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1.5px solid transparent;
+            transition: border-color 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .event-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 100%;
+            height: 2px;
+            background: var(--red);
+            transition: right 0.4s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .event-card:hover::before {
+            border-color: var(--red);
+        }
+
+        .event-card:hover::after {
+            right: 0;
+        }
+
+        .event-card:hover .event-glow {
+            opacity: 1;
+        }
+
+        .event-glow {
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(225, 6, 0, 0.12), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .event-number {
+            font-family: var(--font-display);
+            font-size: 4.5rem;
+            color: rgba(255, 255, 255, 0.04);
+            line-height: 1;
+            position: absolute;
+            top: 20px;
+            right: 24px;
+        }
+
+        .event-tag {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .event-name {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            letter-spacing: 0.04em;
+            line-height: 1.05;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .event-desc {
+            font-size: 0.95rem;
+            color: var(--gray);
+            line-height: 1.7;
+            flex: 1;
+            margin-bottom: 2rem;
+        }
+
+        .event-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .event-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--gray);
+        }
+
+        .event-meta-item svg {
+            color: var(--red);
+            flex-shrink: 0;
+        }
+
+        .event-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-sm-red {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .btn-sm-red:hover {
+            background: var(--red-dim);
+        }
+
+        .btn-sm-ghost {
+            background: transparent;
+            color: var(--gray);
+            border: 1px solid var(--border);
+            clip-path: none;
+        }
+
+        .btn-sm-ghost:hover {
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ─── MODAL ─── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5vw;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            max-width: 680px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px);
+            transition: transform 0.4s ease;
+        }
+
+        .modal-overlay.open .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 36px 40px 28px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .modal-tag {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            letter-spacing: 0.04em;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 28px;
+            right: 32px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--gray);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .modal-body {
+            padding: 32px 40px;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-info-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+        }
+
+        .modal-info-label {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            letter-spacing: 0.15em;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .modal-info-value {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .rules-list {
+            list-style: none;
+        }
+
+        .rules-list li {
+            display: flex;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.95rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .rules-list li:last-child {
+            border-bottom: none;
+        }
+
+        .rules-list li::before {
+            content: '→';
+            color: var(--red);
+            flex-shrink: 0;
+            font-family: var(--font-mono);
+            margin-top: 2px;
+        }
+
+        .modal-contact {
+            background: rgba(225, 6, 0, 0.06);
+            border: 1px solid rgba(225, 6, 0, 0.2);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .modal-contact-icon {
+            color: var(--red);
+            flex-shrink: 0;
+        }
+
+        .modal-contact-text {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .modal-contact-text strong {
+            color: var(--white);
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .modal-footer {
+            padding: 24px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ─── REGISTRATION ─── */
+        #register {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 100%, rgba(225, 6, 0, 0.08), transparent);
+            pointer-events: none;
+        }
+
+        .register-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .register-title {
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            line-height: 0.9;
+            margin: 1.5rem 0;
+        }
+
+        .register-desc {
+            color: var(--gray);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
+
+        .register-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--red);
+            margin: 0 auto 2rem;
+        }
+
+        /* Deadline strip */
+        .deadline-strip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(225, 6, 0, 0.08);
+            border: 1px solid rgba(225, 6, 0, 0.2);
+            padding: 14px 24px;
+            margin-bottom: 2.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: var(--white);
+            text-transform: uppercase;
+        }
+
+        .deadline-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: blink 1.2s ease infinite;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 60px 5vw 40px;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .footer-brand-name {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            letter-spacing: 0.06em;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand-name span {
+            color: var(--red);
+        }
+
+        .footer-brand-sub {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        .footer-col-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.6rem;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .social-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .social-btn {
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+            font-size: 0.75rem;
+        }
+
+        .social-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+            background: rgba(225, 6, 0, 0.06);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-copy {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        .footer-copy a {
+            color: var(--red);
+            text-decoration: none;
+        }
+
+        .footer-made {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: var(--border);
+        }
+
+        /* ─── SCROLL REVEAL ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .reveal-delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        /* ─── KEYFRAMES ─── */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scrollPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── TICKER STRIP ─── */
+        .ticker-wrap {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
+            overflow: hidden;
+            padding: 14px 0;
+        }
+
+        .ticker {
+            display: flex;
+            gap: 0;
+            animation: ticker 30s linear infinite;
+            white-space: nowrap;
+        }
+
+        .ticker-item {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            color: var(--gray);
+            text-transform: uppercase;
+            padding: 0 3rem;
+            flex-shrink: 0;
+        }
+
+        .ticker-item span {
+            color: var(--red);
+            margin-right: 1.5rem;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* ─── MOBILE NAV ─── */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 2rem;
+            transform: translateY(-100%);
+            transition: transform 0.4s ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateY(0);
+        }
+
+        .mobile-menu a {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--red);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            #about {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            nav {
+                padding: 0 6vw;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            section {
+                padding: 80px 6vw;
+            }
+
+            .events-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .modal-body {
+                padding: 24px;
+            }
+
+            .modal-header {
+                padding: 28px 24px 20px;
+            }
+
+            .modal-footer {
+                padding: 20px 24px;
+            }
+
+            .modal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+                gap: 36px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .about-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            body {
+                cursor: auto;
+            }
+
+            .cursor,
+            .cursor-ring {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo">TECHNO<span>PHILA</span></a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#register" class="nav-cta">Register Now</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#about" onclick="toggleMenu()">About</a>
+        <a href="#events" onclick="toggleMenu()">Events</a>
+        <a href="#register" onclick="toggleMenu()">Register</a>
+    </div>
+
+    <!-- ═══ HERO ═══ -->
+    <section id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="scanlines"></div>
+        <div class="hero-slash"></div>
+
+        <div class="hero-content">
+            <p class="hero-eyebrow"> SCC COMPUTER SCIENCE DEPARTMENT Technical Festival — 2026</p>
+            <h1 class="hero-title">
+                TECHNO<span class="red-line">PHILA</span>
+            </h1>
+            <p class="hero-tagline">Where Innovation Meets Execution</p>
+            <div class="hero-buttons">
+                <a href="#events" class="btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polygon points="5,3 19,12 5,21" />
+                    </svg>
+                    Explore Events
+                </a>
+                <a href="#register" class="btn-outline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Register Now
+                </a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Ticker Strip -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker">
+            <!-- Duplicated for seamless loop, JS fills it -->
+        </div>
+    </div>
+
+    <!-- ═══ ABOUT ═══ -->
+    <section id="about">
+        <div class="about-left">
+            <p class="section-label reveal">About the Fest</p>
+            <h2 class="section-title reveal reveal-delay-1">THE<br />TECH<br /><span
+                    style="color:var(--red)">ARENA</span></h2>
+            <div class="about-stats reveal reveal-delay-2">
+                <div class="stat">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label">Events</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">uNLIMITED+</div>
+                    <div class="stat-label">Participation </div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Epic Days</div>
+                </div>
+            </div>
+        </div>
+        <div class="about-right">
+            <p class="about-desc reveal">
+                <strong>TECHNOPHILA</strong> is the premier SCC's Computer Science Departmennt
+                technical festival of our college At 19th & 20th February 2026 — a battleground
+                where the brightest minds converge to compete, collaborate, and create.
+            </p>
+            <p class="about-desc reveal reveal-delay-1">
+                From <strong>rapid-fire coding challenges</strong> to <strong>engineering design wars</strong> and
+                <strong>tech quizzes</strong>, every event is engineered to push your limits. We don't just run
+                competitions — we build <strong>experiences that define careers</strong>.
+            </p>
+            <div class="about-visual reveal reveal-delay-2">
+                <div class="about-box">
+                    <div class="grid-lines"></div>
+                    <div class="about-box-inner">TF</div>
+                    <div class="about-badge">
+                        <div class="corner-bracket tl"></div>
+                        <div class="corner-bracket tr"></div>
+                        <div class="corner-bracket bl"></div>
+                        <div class="corner-bracket br"></div>
+                        <div class="about-badge-title">2026 EDITION</div>
+                        <div class="about-badge-sub">Bigger. Bolder. Better.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ EVENTS ═══ -->
+    <section id="events">
+        <div class="events-header">
+            <div>
+                <p class="section-label reveal">Compete & Conquer</p>
+                <h2 class="section-title reveal reveal-delay-1">EVENTS<br /><span style="color:var(--red)">LINEUP</span>
+                </h2>
+            </div>
+            <p class="reveal" style="color:var(--gray);max-width:320px;font-size:0.95rem;line-height:1.7;">
+                Each event is crafted to challenge a different dimension of your technical capability. Choose your
+                arena.
+            </p>
+        </div>
+
+        <div class="events-grid" id="events-grid">
+            <!-- Filled by JS -->
+        </div>
+    </section>
+
+    <!-- ═══ REGISTRATION ═══ -->
+    <section id="register">
+        <div class="register-bg"></div>
+        <div class="register-content">
+            <p class="section-label reveal" style="justify-content:center;">Secure Your Spot</p>
+            <h2 class="register-title reveal reveal-delay-1">
+                READY<br />TO<br /><span style="color:var(--red)">COMPETE?</span>
+            </h2>
+            <div class="register-divider reveal reveal-delay-2"></div>
+            <p class="register-desc reveal reveal-delay-2">
+                Registrations are open for all events. Spots are limited and fill fast — lock in your team today. One
+                registration form covers all events you wish to participate in.
+            </p>
+            <div class="deadline-strip reveal reveal-delay-3">
+                <div class="deadline-dot"></div>
+                Registrations Open — Register Before Seats Fill Up
+            </div>
+
+            <!-- Embedded Form -->
+            <div class="reveal reveal-delay-3" style="width:100%;max-width:900px;margin-top:2rem;position:relative;">
+                <div
+                    style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);box-shadow:0 0 40px rgba(225,6,0,0.1);">
+                    <div
+                        style="background:#111;padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;">
+                        <h3 style="font-size:1.5rem;margin-bottom:1rem;color:var(--white);">Registration Form</h3>
+                        <p style="color:var(--gray);margin-bottom:2rem;max-width:400px;font-size:0.9rem;">
+                            Please proceed to the official form to complete your registration for Technophila 2026.
+                        </p>
+                        <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105"
+                            target="_blank" rel="noopener" class="btn-primary">
+                            Open Registration Form
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left:8px;">
+                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </a>
+                        <p style="margin-top:1.5rem;font-size:0.75rem;color:var(--gray);opacity:0.6;">
+                            Opens in a new tab • Devoloped by Siddiq
+                        </p>
+                    </div>
+                </div>
+                <!-- Fallback/Navigation Buttons below form -->
+                <div style="display:flex;justify-content:center;margin-top:1.5rem;">
+                    <a href="#events" class="btn-outline" style="font-size:0.75rem;padding:12px 28px;">View All
+                        Events</a>
+                </div>
+            </div>
+
+            <p class="reveal"
+                style="margin-top:2rem;font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.15em;color:var(--gray);text-transform:uppercase;">
+                Free entry · All Students welcome · Certifications for all finishers
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer>
+        <div class="footer-top">
+            <div>
+                <div class="footer-brand-name">TECHNO<span>PHILA</span></div>
+                <div class="footer-brand-sub">Annual Technical Festival</div>
+                <p style="margin-top:1rem;font-size:0.9rem;color:var(--gray);line-height:1.7;max-width:320px;">
+                    The ultimate arena for technical talent. Organized by the students of Dept. of Computer Science &
+                    Engineering.
+                </p>
+                <div class="social-row">
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/scc_computerscience?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                        class="social-btn" title="Instagram">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <p class="footer-col-title">Quick Links</p>
+                <ul class="footer-links">
+                    <li><a href="#about">About the Fest</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#register">Register</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom" style="flex-direction:column; gap:1.5rem; text-align:center; padding-top:2rem;">
+            <div
+                style="font-family:var(--font-display); font-size:clamp(2rem, 5vw, 4rem); font-weight:900; letter-spacing:0.05em; color:var(--white); text-transform:uppercase; line-height:1;">
+                DEVELOPED BY <span style="color:var(--red); text-shadow:0 0 30px rgba(225,6,0,0.5);">SIDDIQ</span>
+            </div>
+            <p class="footer-copy" style="font-size:0.8rem; opacity:0.6;">
+                &copy; 2026 TECHNOPHILA · <a href="#" style="color:inherit;text-decoration:none;">Department of Computer
+                    Science</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- ═══ MODAL ═══ -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div class="modal-tag" id="modalTag">Event Rules</div>
+                <h2 class="modal-title" id="modalTitle">Event Name</h2>
+                <button class="modal-close" onclick="closeModalBtn()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105"
+                    target="_blank" class="btn-primary btn-sm btn-sm-red"
+                    style="clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);padding:12px 28px;font-size:0.7rem;">Register
+                    for this Event</a>
+                <button class="btn-sm btn-sm-ghost" onclick="closeModalBtn()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+        // ── EVENT DATA ──
+        const events = [
+            {
+                id: 1,
+                tag: "Poster Making",
+                name: " GraphiXel ",
+                desc: "An intense poster making challenge where designers transform ideas into powerful visuals against the clock..",
+                team: "Individual participant only",
+                duration: "1 Hour (DAY-1)",
+                eligibility: "All years welcome",
+                format: "Offline· On-site poster creation with Theme reveal at the start",
+                contact: "Akshaya R · +91  9741295315",
+                rules: [
+                    "Plagiarism will lead to disqualification.",
+                    "Participant should use Canva or any valid Application for creating posters..",
+                    " Participants have to make a poster on a blank document.",
+                    "No use of existing templates.",
+                    "Participant's kindly carry your own laptopsn.",
+                    "After completing the poster , submit in the specified file format to a  given drive.",
+                ]
+            },
+            {
+                id: 2,
+                tag: "Logo Design",
+                name: "PixelForge",
+                desc: "A high-intensity logo design challenge crafting unique brand identities through creativity, symbolism, and visual precision.",
+                team: "Individual participant only",
+                duration: "1 Hour (DAY-2)",
+                eligibility: "All years welcome",
+                format: "Offline· On-site logo creation with Theme reveal at the start",
+                contact: "PRIYADARSHINI K · +91 7411020021",
+                rules: [
+                    "TTheme will be given on spot.",
+                    "Plagiarism will lead to disqualification.",
+                    "Judging is based on accuracy, efficiency, and presentation clarity.",
+                    "Participant should use Canva for creating logos.",
+                    " Participant's kindly carry your own laptops..",
+                    "After completing the logo , submit in the specified file format to a  given drive .",
+                ]
+            },
+            {
+                id: 3,
+                tag: "IT Quiz",
+                name: "TECHNOVA",
+                desc: "A thrilling IT quiz battle assessing technical awareness, critical thinking, and rapid decision-making abilities.",
+                team: "2 Members",
+                duration: "3 Spectacular Rounds (DAY-2)",
+                eligibility: "All years welcome",
+                format: "Elimination rounds with increasing difficulty, covering a wide range of IT topics",
+                contact: "Chandana M · +91 6361963651",
+                rules: [
+                    "ROUND: 1 QUICK BYTE CHALLENGE ) Each team must consist of 2 members ,  • Each team must use only one device(one mobile) with proper internet connection , • No discussion among other teams is permitted. ",
+                    "ROUND: 2 CODE QUEST ) Use of AI tools , or any form of malpractice will result in disqualification  • Fixed time limit . ",
+                    "ROUND: 3 TOPIC TORNADO) • If the team fails to answer , the question may be passed to the next team  Decisions made by the organizing committee shall be final. ",
+                    "Judging is based on accuracy, efficiency, and presentation clarity.",
+                ]
+            },
+            {
+                id: 4,
+                tag: "Debate",
+                name: "DEBATRIX",
+                desc: "An interactive debate competition building confidence, public speaking skills, and logical expression of ideas..",
+                team: "2 Members",
+                duration: "3  spectacular Rounds (DAY-1)",
+                eligibility: "Open to all",
+                format: "3 Rounds · Buzzer-based quiz format with escalating difficulty",
+                contact: "Pavan & Varalakshmi · +91 7019703479",
+                rules: [
+                    "ROUND 1 - Rapid Fire) Participants get 30 seconds to speak for or against a surprise tech topic.",
+                    "ROUND 2 - Clash of Minds )  Participants debate in groups on a given topic, presenting collective arguments and rebuttals. ",
+                    "ROUND 3 - The Final Verdict )Finalists receive a complex tech issue and must present arguments, counterarguments, and conclusion.  ",
+                    "Topics will be provided on the spot",
+                    "Time limit must be strictly followed.",
+                    "Use of notes allowed only in  round 3.",
+                    "Decisions made by the organizing committee shall be final.",
+                ]
+            },
+            {
+                id: 5,
+                tag: "Start Up",
+                name: "PITCH PULSE",
+                desc: "Present a tech startup idea to a panel of industry judges. Clarity, feasibility, and innovation are what matter here.",
+                team: "1-2 Members",
+                duration: "2 Spectacular Phases (DAY-1)",
+                eligibility: "All years welcome",
+                format: "Abstract submission → Shortlisting → Final Pitch",
+                contact: "Deepika C , Siddiq , Karthik · +91 7676383132",
+                rules: [
+                    "Phase 1: Initial Pitch ) Each team will present their idea  , Based on these presentations, the strongest pitches will be shortlisted for the next round.",
+                    "Phase 2: Detailed Pitch Presentation ) Shortlisted teams will present their idea to the judges. Time allocation: 5 minutes for presentation + 2 minutes for Q&A per team.",
+                    "All participants are expected to maintain professionalism throughout the event.",
+                    "The decision of the judges will be final and binding.",
+                    "Teams will be scored on innovation, feasibility, business model, and clarity.",
+                    "No team member substitutions are allowed post-shortlisting.",
+                ]
+            },
+            {
+                id: 6,
+                tag: "Coding",
+                name: "Deal Or no Deal",
+                desc: "A strategy-based technical game where participants answer C programming questions to maximize rewards and avoid risks..",
+                team: "2 Members",
+                duration: "Time Based (DAY-1)",
+                eligibility: "All years welcome",
+                format: "Qualification · Deal or No Deal",
+                contact: " Yashashwini, poorvika, Nikitha · +91 7892852082",
+                rules: [
+                    "There are multiple sealed boxes in the game. Each box contains a C programming question and certain points. ",
+                    "The contestant chooses one box at the beginning. This box will remain closed until the end. ",
+                    "The contestant then selects other boxes to open in each round. ",
+                    "To open a box, the contestant must answer the C question inside it.",
+                    "If the answer is correct, the points remain in the game. If the answer is wrong, those points are removed",
+                    "After a few boxes are opened, the Banker (host/faculty) will offer some points.",
+                    "The contestant must choose: Deal → accept the offer and finish the game , No Deal → reject the offer and continue playing.",
+                    "If the contestant accepts the deal, they win the offered points.",
+                    "If the contestant rejects all deals, their selected box will be opened at the end.",
+                    "The contestant wins the points available in their final box.",
+                ]
+            },
+            {
+                id: 7,
+                tag: "IPL Auction",
+                name: "BID BASH",
+                desc: "Experience the thrill of IPL auction! Bid for your favorite players and build your dream team with limited budget.",
+                team: "2 Members",
+                duration: "Time Based (DAY-1)",
+                eligibility: "All years welcome",
+                format: "Player Auction",
+                contact: "Manish, Nithish, Vikas, Nandish · +917975151656 , +916363179945",
+                rules: [
+                    "Participants are requested to bring their own laptop with proper internet connection to keep tabs on their action progress.",
+                    "If more than 8 teams register, a qualification quiz round will be conducted.",
+                    "Top 8 teams from quiz will qualify for auction participation.",
+                    "Teams can buy maximum 11+1players.",
+                    "Each team will get a fixed budget.",
+                    "Players will be given Rating points and team with highest rating points and best balanced team will be considered winner.",
+                    "If team runs out of budget and could not make playing 11 will be eliminated.",
+                    "No use of mobile phones during auction.",
+                    "Auctioneer's decision is final decision.",
+                ]
+            },
+            {
+                id: 8,
+                tag: "Treasure Hunt",
+                name: "The hidden Quest",
+                desc: "A thrilling survival treasure hunt where only the smartest and fastest teams uncover the final prize",
+                team: "3–4 Members",
+                duration: "Time based (DAY-2)",
+                eligibility: "All branches welcome",
+                format: "Preliminary round → Elimination round → Final challenge",
+                contact: "Snegha, Inchara, Ambika · +91 97413 71528",
+                rules: [
+                    "Seeking help from other teams or non-team members is strictly prohibited.",
+                    "·Usage of gadgets (mobile phones, smartwatches, tablets, etc.) is strictly prohibited.",
+                    "Violation of rules regarding help or gadget usage may lead to immediate disqualification.",
+                    "Participants enrolled in multiple events must ensure that their event timings do not clash.",
+                    "Any form of misbehavior, cheating, or arguing with volunteers or coordinators will lead to disqualification.",
+                    "The organizing committee reserves the right to modify rules or cancel the event if necessary.",
+                ]
+            },
+            {
+                id: 9,
+                tag: "Photography",
+                name: "PIXORA",
+                desc: "Capture the essence of the event through your lens. Best photos will be featured in the official album.",
+                team: "1–2 Members",
+                duration: "Time based (DAY-2)",
+                eligibility: "open To all",
+                format: "Photography",
+                contact: "Kusuma & Sonu · +91 8088342296",
+                rules: [
+                    "Theme will be given on spot Participants must strictly follow the given theme.",
+                    "Only original photographs clicked by the participant inside the campus are allowed.",
+                    "Only mobile phones are allowed.",
+                    "Basic editing allowed (brightness, contrast, cropping).Time limit: 120 minutes.",
+                    "Each participant can submit only 1 photo.",
+                    "SUBMISSION GUIDELINES: Photo in JPEG/JPG/PNG format, with good resolution (minimum 1080px on the longer side)File name format: Name__class&sec.jpg Along with: Name , Class&sec , title of the photo , Roll No. ",
+                    "Participants must provide a short caption/description (max 30 words) for each photograph",
+                    "The organizers reserve the right to use the submitted photographs for promotional purposes.",
+                    "Other Rules: The decision of the judges will be final and binding. The organizers reserve the right to disqualify entries that do not follow the rules.",
+                ]
+            },
+            {
+                id: 10,
+                tag: "SQUAD CLASH",
+                name: "Free Fire",
+                desc: "Gear up for the ultimate battle royale showdown! Assemble your squad and prove your skills in the most intense Free Fire tournament of the year.",
+                team: "4 Members",
+                duration: "Time Based (DAY-1)",
+                eligibility: "All years welcome",
+                format: "Online Battle Royale",
+                contact: "Sanjay & Nikhil · +91 7483895208",
+                rules: [
+                    "Room ID & Password will be shared 10 minutes before match.",
+                    "Four Players mandatory from each team.",
+                    "No change in players/ID's once registered.",
+                    "No Wi-Fi will be provided and we're not responsible for network issues.",
+                    "One person from each team must record their POV's.",
+                    "Event will be held in 2 rounds:  1-BATTLE ROYALE, 2-CLASH SQUAD.",
+                    "1-BATTLE ROYALE: 3 Matches will be played for all the contesting teams. BERMUDA, KALAHARI, PURGATORY MAPS.",
+                    "Maps must be downloaded prior the Event.",
+                    "Pointing System : #1 - 10 #2 - 8 #3 - 6 #4 - 5 #5 - 4 #6 - 3 #7 - 2 #8 - 1 Each kill - 1 point If they points are tied among teams, team with highest kills will be qualified.",
+                    "2-CLASH SQUAD: Top 4 teams from the Round 1 will be qualified.",
+                    " 2 teams face off each other and winning teams advances to Finals.",
+                    "No character Skills are allowed",
+                ]
+            },
+            {
+                id: 11,
+                tag: "BGMI",
+                name: " Clutch 2.0",
+                desc: "Gear up for the ultimate battle royale showdown! Assemble your squad and prove your skills in the most intense BGMI tournament of the year.",
+                team: "2–4 Members",
+                duration: "Time Based (DAY-2)",
+                eligibility: "All years welcome",
+                format: "Online Battle Royale",
+                contact: "Dishank , Ashwin · +91 8217588211",
+                rules: [
+                    "Maps : Erangel, Miramar, Sanhok (Based on number of squads)",
+                    "3 Rooms Matches will be conducted to ensure fair gameplay, and 10 mins of break after every match.",
+                    "Points based on Kills + Chicken dinner",
+                    "Each kill = 2 points; Chicken dinner = 5 points.",
+                    "In case of tie breaker following will be considered to select the winner: 1.Most Chicken Dinner 2. Most Total Kills.",
+                    "Players must bring their own devices, chargers & earphones.",
+                    "No Wi-Fi will be provided and we're not responsible for network issues.",
+                    "Any team using hacks, cheats, scripts, or third-party apps will be disqualified.",
+                    "The organizers reserve the right to change the rules or format at any time.",
+                ]
+            },
+            {
+                id: 12,
+                tag: "Mini Militia",
+                name: "MMA",
+                desc: "A fast-paced Mini Militia combat challenge where tactical movement and shooting precision decide survival.",
+                team: "On spot Declaration",
+                duration: "Time Based (DAY-1)",
+                eligibility: "All years welcome",
+                format: "Online",
+                contact: "Jismon Jolly · +91 78927 20486",
+                rules: [
+                    "Game will be hosted 5 minutes before the match.",
+                    "Strictly no use of Scripts, hacks or mods. If found the player will be disqualified.",
+                    "In-game name should be given to the coordinators before game.",
+                    "Use of shield is strictly prohibited. If caught the player will be disqualified.",
+                    "Rounds will be informed according to the number of players.",
+                    "8 players are selected to the final round as followed by the previous rounds.",
+                    "Final round will have 3 rounds in 3 different maps.",
+                    "From three rounds players having top score will be declared as winners",
+                ]
+            },
+            {
+                id: 13,
+                tag: "Reel Making",
+                name: "ReelScape",
+                desc: "A challenge to capture energy through creativity.",
+                team: "UNLIMITED",
+                duration: "Time Based (DAY-1&2)",
+                eligibility: "Open to all",
+                format: "On-spot",
+                contact: "Pragathi, Monisha · 9113004584, 7204691344",
+                rules: [
+                    "Theme Event Promo Reel.",
+                    "Reel must be created using original content only.",
+                    "No use of pre-made reel templates.",
+                    "Duration of the reel: 30–60 seconds.",
+                    "Participant must include the given theme clearly in the reel.",
+                    "Reel should be edited by the participant only.",
+                    "Use of copyrighted content without permission is not allowed.",
+                    "After completing the reel, submit it in the specified file format (MP4) to the given drive within the time limit.",
+                ]
+            }
+        ];
+
+        // ── RENDER EVENTS ──
+        const grid = document.getElementById('events-grid');
+        events.forEach((ev, i) => {
+            grid.innerHTML += `
+      <div class="event-card reveal reveal-delay-${(i % 4) + 1}">
+        <div class="event-glow"></div>
+        <div class="event-number">0${ev.id}</div>
+        <div class="event-tag">${ev.tag}</div>
+        <h3 class="event-name">${ev.name}</h3>
+        <p class="event-desc">${ev.desc}</p>
+        <div class="event-meta">
+          <div class="event-meta-item">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            ${ev.team}
+          </div>
+          <div class="event-meta-item">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${ev.duration}
+          </div>
+        </div>
+        <div class="event-buttons">
+          <button class="btn-sm btn-sm-red" onclick="openModal(${ev.id})">View Rules</button>
+          <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105" target="_blank" class="btn-sm btn-sm-ghost">Register</a>
+        </div>
+      </div>
+    `;
+        });
+
+        // ── TICKER FILL ──
+        const tickerItems = [
+            "GRAPHIXEL", "PIXELFORGE", "TECHNOVA", "DEBATRIX", "PITCH PULSE", "DEAL OR NO DEAL",
+            "BID BASH", "THE HIDDEN QUEST", "PIXORA", "FREE FIRE", "CLUTCH 2.0", "MINI MILITIA", "REELSCAPE",
+            "GRAPHIXEL", "PIXELFORGE", "TECHNOVA", "DEBATRIX", "PITCH PULSE", "DEAL OR NO DEAL",
+            "BID BASH", "THE HIDDEN QUEST", "PIXORA", "FREE FIRE", "CLUTCH 2.0", "MINI MILITIA", "REELSCAPE",
+        ];
+        const ticker = document.getElementById('ticker');
+        let tickerHTML = tickerItems.map(t => `<span class="ticker-item"><span>★</span>${t}</span>`).join('');
+        ticker.innerHTML = tickerHTML + tickerHTML; // duplicate for seamless loop
+
+        // ── MODAL ──
+        function openModal(id) {
+            const ev = events.find(e => e.id === id);
+            if (!ev) return;
+            document.getElementById('modalTag').textContent = ev.tag;
+            document.getElementById('modalTitle').textContent = ev.name;
+            document.getElementById('modalBody').innerHTML = `
+      <div class="modal-grid">
+        <div class="modal-info-item"><div class="modal-info-label">Team Size</div><div class="modal-info-value">${ev.team}</div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Duration</div><div class="modal-info-value">${ev.duration}</div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Eligibility</div><div class="modal-info-value">${ev.eligibility}</div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Format</div><div class="modal-info-value" style="font-size:0.85rem">${ev.format}</div></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Rules & Guidelines</div>
+        <ul class="rules-list">
+          ${ev.rules.map(r => `<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="modal-contact">
+        <div class="modal-contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.48 9.7a19.79 19.79 0 01-3.07-8.67A2 2 0 012.39 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <div class="modal-contact-text"><strong>Event Coordinator</strong>${ev.contact}</div>
+      </div>
+    `;
+            document.getElementById('modalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(e) {
+            if (e.target === document.getElementById('modalOverlay')) closeModalBtn();
+        }
+        function closeModalBtn() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+
+        // ── NAVBAR SCROLL ──
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // ── SCROLL REVEAL ──
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('visible'); }
+            });
+        }, { threshold: 0.12 });
+        revealEls.forEach(el => observer.observe(el));
+
+        // ── CUSTOM CURSOR ──
+        const cursor = document.getElementById('cursor');
+        const cursorRing = document.getElementById('cursorRing');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+        function animateCursor() {
+            cursor.style.left = mx + 'px';
+            cursor.style.top = my + 'px';
+            rx += (mx - rx) * 0.12;
+            ry += (my - ry) * 0.12;
+            cursorRing.style.left = rx + 'px';
+            cursorRing.style.top = ry + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button, .event-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+        });
+
+        // ── MOBILE MENU ──
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+
+        // ── HERO PARTICLE CANVAS ──
+        (function initCanvas() {
+            const canvas = document.getElementById('hero-canvas');
+            const ctx = canvas.getContext('2d');
+            let W, H, particles = [], lines = [];
+
+            function resize() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * W;
+                    this.y = Math.random() * H;
+                    this.vx = (Math.random() - 0.5) * 0.4;
+                    this.vy = (Math.random() - 0.5) * 0.4;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.alpha = Math.random() * 0.5 + 0.1;
+                    this.isRed = Math.random() < 0.12;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.isRed
+                        ? `rgba(225,6,0,${this.alpha})`
+                        : `rgba(255,255,255,${this.alpha * 0.5})`;
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+            function drawConnections() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 130) {
+                            const alpha = (1 - dist / 130) * 0.08;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(225,6,0,${alpha})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            // Scanline animation
+            let scanY = 0;
+            function animate() {
+                ctx.clearRect(0, 0, W, H);
+
+                // Subtle background gradient
+                const grad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7);
+                grad.addColorStop(0, 'rgba(225,6,0,0.04)');
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+
+                drawConnections();
+                particles.forEach(p => { p.update(); p.draw(); });
+
+                // Moving scan line
+                scanY = (scanY + 0.5) % H;
+                const scanGrad = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 60);
+                scanGrad.addColorStop(0, 'rgba(225,6,0,0)');
+                scanGrad.addColorStop(0.5, 'rgba(225,6,0,0.04)');
+                scanGrad.addColorStop(1, 'rgba(225,6,0,0)');
+                ctx.fillStyle = scanGrad;
+                ctx.fillRect(0, scanY - 60, W, 120);
+
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+    </script>
+</body>
+
+</html>
