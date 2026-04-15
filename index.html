@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>TECHNOPHILIA — Where Innovation Meets Execution</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1509,7 +1511,7 @@
                             Please proceed to the official form to complete your registration for Technophilia 2026.
                         </p>
                         <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105"
-                            target="_blank" rel="noopener" class="btn-primary">
+                            target="_blank" rel="noopener noreferrer" class="btn-primary">
                             Open Registration Form
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" style="margin-left:8px;">
@@ -1549,7 +1551,7 @@
             Don't miss a beat. Connect with other participants, get instant updates on events, and find potential
             teammates in our official WhatsApp community.
         </p>
-        <a href="https://chat.whatsapp.com/BAQRLYZYZBDGWncD6tlwVj" target="_blank" rel="noopener"
+        <a href="https://chat.whatsapp.com/BAQRLYZYZBDGWncD6tlwVj" target="_blank" rel="noopener noreferrer"
             class="btn-primary reveal reveal-delay-3" style="font-size:0.9rem;padding:18px 42px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right:10px;">
                 <path
@@ -1617,7 +1619,7 @@
             </div>
             <div class="modal-footer">
                 <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105"
-                    target="_blank" class="btn-primary btn-sm btn-sm-red"
+                    target="_blank" rel="noopener noreferrer" class="btn-primary btn-sm btn-sm-red"
                     style="clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);padding:12px 28px;font-size:0.7rem;">Register
                     for this Event</a>
                 <button class="btn-sm btn-sm-ghost" onclick="closeModalBtn()">Close</button>
@@ -1627,6 +1629,13 @@
 
     <!-- ═══ JAVASCRIPT ═══ -->
     <script>
+        // ── SECURITY: HTML ESCAPE UTILITY ──
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
         // ── EVENT DATA ──
         const events = [
             {
@@ -1900,32 +1909,40 @@
             }
         ];
 
-        // ── RENDER EVENTS ──
+        // ── RENDER EVENTS (XSS-safe) ──
         const grid = document.getElementById('events-grid');
         events.forEach((ev, i) => {
-            grid.innerHTML += `
-      <div class="event-card reveal reveal-delay-${(i % 4) + 1}">
+            const card = document.createElement('div');
+            card.className = `event-card reveal reveal-delay-${(i % 4) + 1}`;
+            card.innerHTML = `
         <div class="event-glow"></div>
-        <div class="event-number">0${ev.id}</div>
-        <div class="event-tag">${ev.tag}</div>
-        <h3 class="event-name">${ev.name}</h3>
-        <p class="event-desc">${ev.desc}</p>
+        <div class="event-number">0${parseInt(ev.id, 10)}</div>
+        <div class="event-tag"></div>
+        <h3 class="event-name"></h3>
+        <p class="event-desc"></p>
         <div class="event-meta">
           <div class="event-meta-item">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            ${ev.team}
+            <span class="team-text"></span>
           </div>
           <div class="event-meta-item">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            ${ev.duration}
+            <span class="duration-text"></span>
           </div>
         </div>
         <div class="event-buttons">
-          <button class="btn-sm btn-sm-red" onclick="openModal(${ev.id})">View Rules</button>
-          <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105" target="_blank" class="btn-sm btn-sm-ghost">Register</a>
+          <button class="btn-sm btn-sm-red">View Rules</button>
+          <a href="https://handsome-playground-63c.notion.site/305788457edc80f1bc46cd5b1027b4c4?pvs=105" target="_blank" rel="noopener noreferrer" class="btn-sm btn-sm-ghost">Register</a>
         </div>
-      </div>
-    `;
+      `;
+            // Set text content safely (no HTML injection)
+            card.querySelector('.event-tag').textContent = ev.tag;
+            card.querySelector('.event-name').textContent = ev.name;
+            card.querySelector('.event-desc').textContent = ev.desc;
+            card.querySelector('.team-text').textContent = ev.team;
+            card.querySelector('.duration-text').textContent = ev.duration;
+            card.querySelector('.btn-sm-red').addEventListener('click', () => openModal(ev.id));
+            grid.appendChild(card);
         });
 
         // ── TICKER FILL ──
@@ -1936,35 +1953,60 @@
             "BID BASH", "THE HIDDEN QUEST", "PIXORA", "FREE FIRE", "CLUTCH 2.0", "MINI MILITIA", "REELSCAPE",
         ];
         const ticker = document.getElementById('ticker');
-        let tickerHTML = tickerItems.map(t => `<span class="ticker-item"><span>★</span>${t}</span>`).join('');
-        ticker.innerHTML = tickerHTML + tickerHTML; // duplicate for seamless loop
+        // Build ticker safely using DOM methods
+        function buildTickerItems(container) {
+            tickerItems.forEach(t => {
+                const span = document.createElement('span');
+                span.className = 'ticker-item';
+                const star = document.createElement('span');
+                star.textContent = '★';
+                span.appendChild(star);
+                span.appendChild(document.createTextNode(t));
+                container.appendChild(span);
+            });
+        }
+        buildTickerItems(ticker);
+        buildTickerItems(ticker); // duplicate for seamless loop
 
-        // ── MODAL ──
+        // ── MODAL (XSS-safe) ──
         function openModal(id) {
             const ev = events.find(e => e.id === id);
             if (!ev) return;
             document.getElementById('modalTag').textContent = ev.tag;
             document.getElementById('modalTitle').textContent = ev.name;
-            document.getElementById('modalBody').innerHTML = `
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
       <div class="modal-grid">
-        <div class="modal-info-item"><div class="modal-info-label">Team Size</div><div class="modal-info-value">${ev.team}</div></div>
-        <div class="modal-info-item"><div class="modal-info-label">Duration</div><div class="modal-info-value">${ev.duration}</div></div>
-        <div class="modal-info-item"><div class="modal-info-label">Eligibility</div><div class="modal-info-value">${ev.eligibility}</div></div>
-        <div class="modal-info-item"><div class="modal-info-label">Format</div><div class="modal-info-value" style="font-size:0.85rem">${ev.format}</div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Team Size</div><div class="modal-info-value" id="mi-team"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Duration</div><div class="modal-info-value" id="mi-duration"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Eligibility</div><div class="modal-info-value" id="mi-eligibility"></div></div>
+        <div class="modal-info-item"><div class="modal-info-label">Format</div><div class="modal-info-value" id="mi-format" style="font-size:0.85rem"></div></div>
       </div>
       <div class="modal-section">
         <div class="modal-section-title">Rules & Guidelines</div>
-        <ul class="rules-list">
-          ${ev.rules.map(r => `<li>${r}</li>`).join('')}
-        </ul>
+        <ul class="rules-list" id="mi-rules"></ul>
       </div>
       <div class="modal-contact">
         <div class="modal-contact-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.48 9.7a19.79 19.79 0 01-3.07-8.67A2 2 0 012.39 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
         </div>
-        <div class="modal-contact-text"><strong>Event Coordinator</strong>${ev.contact}</div>
+        <div class="modal-contact-text"><strong>Event Coordinator</strong><span id="mi-contact"></span></div>
       </div>
     `;
+            // Set text content safely (no HTML injection)
+            document.getElementById('mi-team').textContent = ev.team;
+            document.getElementById('mi-duration').textContent = ev.duration;
+            document.getElementById('mi-eligibility').textContent = ev.eligibility;
+            document.getElementById('mi-format').textContent = ev.format;
+            document.getElementById('mi-contact').textContent = ev.contact;
+            const rulesList = document.getElementById('mi-rules');
+            ev.rules.forEach(r => {
+                const li = document.createElement('li');
+                li.textContent = r;
+                rulesList.appendChild(li);
+            });
+
             document.getElementById('modalOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
